@@ -1,0 +1,1 @@
+# Rails Competency Test
