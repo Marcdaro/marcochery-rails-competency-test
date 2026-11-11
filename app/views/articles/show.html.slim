@@ -1,0 +1,21 @@
+h1 = @article.title
+
+p
+    strong Category:
+    = " #{@article.category}"
+
+p
+    strong Author:
+    = " #{@article.user.email}"
+
+= simple_format(@article.content)
+
+- if current_user.has_role?(:editor) && @article.user_id == current_user.id
+    p = link_to "Edit Article", edit_article_path(@article)
+
+    = button_to "Delete Article", 
+        article_path(@article),
+        method: :delete,
+        form: {data: { turbo_confirm: "Do you want to delete this article?!" } }
+
+p = link_to "Go back to Articles", articles_path

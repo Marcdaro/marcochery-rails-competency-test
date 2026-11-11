@@ -1,0 +1,14 @@
+h1 Marco News Network
+
+p Latest news from different categories
+
+p = link_to "Browse all articles", articles_path
+
+- @articles_by_category.each do |category, articles|
+    section
+        h2 = category
+
+        - articles.each do |article|
+            article
+                h3 = link_to article.title, article_path(article)
+                p = truncate(article.content, length: 130)
