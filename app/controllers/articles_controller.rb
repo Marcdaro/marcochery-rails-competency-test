@@ -67,7 +67,7 @@ class ArticlesController < ApplicationController
     return if user_signed_in?
 
     redirect_to new_user_registration_path,
-      alert: "Come on big bro, you gotta sign in to view this article!!"
+      alert: "Please sign up or log in to read the full article."
   end
 
   def set_article

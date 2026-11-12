@@ -1,11 +1,14 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+#
+# Every user needs a unique email: Devise adds a unique index on users.email,
+# so two fixtures with a blank email make every test fail before it runs.
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the "{}" from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-# column: value
+one:
+  email: fixture_editor@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password") %>
+  roles: editor
+
+two:
+  email: fixture_reader@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password") %>
+  roles: user

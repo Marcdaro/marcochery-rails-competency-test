@@ -1,22 +1,21 @@
 = form_with model: article do |form|
-    - if article.errors.any?
-        h3 Please fix these errors:
-        ul
-            - article.errors.full_message.each do |message|
-                li = message
+  - if article.errors.any?
+    h3 Please fix these errors:
+    ul
+      - article.errors.full_messages.each do |message|
+        li = message
 
-    
-    div
-        = form.label :category
-        = form.text_field :category
+  div
+    = form.label :title
+    = form.text_field :title
 
-    div 
-        = form.label :content
-        = form.text_field :category
+  div
+    = form.label :category
+    = form.text_field :category
 
-    div
-        = form.label :content
-        = form.text_area :content, rows: 10
+  div
+    = form.label :content
+    = form.text_area :content, rows: 10
 
-    div 
-        = form.submit
+  div
+    = form.submit

@@ -1,3 +1,13 @@
-h1 Articles for your viewing needs
+h1 All Articles
 
+- if user_signed_in? && current_user.has_role?(:editor)
+  p = link_to "Create Article", new_article_path
 
+- if @articles.empty?
+  p No articles have been published yet.
+
+- @articles.each do |article|
+  article
+    h2 = link_to article.title, article_path(article)
+    p = article.category
+    p = truncate(article.content, length: 130)

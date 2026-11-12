@@ -94,6 +94,66 @@ class ArticlePermissionsTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "editors can edit their own articles" do
+    sign_in @editor
+
+    patch article_path(@article), params: { article: { title: "Updated Title" } }
+
+    assert_redirected_to article_path(@article)
+    assert_equal "Updated Title", @article.reload.title
+  end
+
+  test "editors can delete their own articles" do
+    sign_in @editor
+
+    assert_difference("Article.count", -1) do
+      delete article_path(@article)
+    end
+    assert_redirected_to articles_path
+  end
+
+  test "editors cannot delete other user articles" do
+    sign_in @other_editor
+
+    assert_no_difference("Article.count") do
+      delete article_path(@article)
+    end
+    assert_response :not_found
+  end
+
+  test "invalid articles are not saved and the form is shown again" do
+    sign_in @editor
+
+    assert_no_difference("Article.count") do
+      post articles_path, params: { article: { title: "", content: "", category: "" } }
+    end
+    assert_response :unprocessable_entity
+    assert_select "li", text: "Title can't be blank"
+  end
+
+  test "guests are sent to log in when trying to create an article" do
+    get new_article_path
+    assert_redirected_to new_user_session_path
+  end
+
+  test "regular users cannot open the new article form" do
+    sign_in @reader
+    get new_article_path
+    assert_response :redirect
+    assert_not_equal new_article_path, URI(response.location).path
+  end
+
+  test "homepage shows at most three articles per category" do
+    4.times do |i|
+      Article.create!(title: "Sports #{i}", content: "Body", category: "Sports", user: @editor)
+    end
+
+    get root_path
+
+    assert_select "h3 a", text: /\ASports \d\z/, count: 3
+    assert_select "h3 a", text: "Test Article"
+  end
+
   test "admins cannot create articles" do
     sign_in @admin
 
