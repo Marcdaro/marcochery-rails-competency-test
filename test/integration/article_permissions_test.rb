@@ -5,34 +5,34 @@ class ArticlePermissionsTest < ActionDispatch::IntegrationTest
 
   setup do
     @editor = User.create!(
-      email: "editor@example.com",
-      password: "password",
+      email: "editor@marco.com",
+      password: "password123",
       role: :editor
-      )
+    )
 
-      @other_editor = User.create!(
-        email: "other_editor@example.com",
-        password: "password",
-        role: :editor
-      )
+    @other_editor = User.create!(
+      email: "other_editor@marco.com",
+      password: "password321",
+      role: :editor
+    )
 
-      @reader = User.create!(
-        email: "reader@example.com",
-        password: "password"
-      )
+    @reader = User.create!(
+      email: "reader@marco.com",
+      password: "password0924"
+    )
 
-      @admin = User.create!(
-        email: "admin@example.com",
-        password: "password",
-        role: :admin
-      )
+    @admin = User.create!(
+      email: "admin@marco.com",
+      password: "password1222",
+      role: :admin
+    )
 
-      @article = Article.create!(
-        title: "Test Article",
-        content: "This is a test article.",
-        category: "Test",
-        user: @editor
-      )
+    @article = Article.create!(
+      title: "Test Article",
+      content: "This is a test article.",
+      category: "Test",
+      user: @editor
+    )
   end
 
   test "guests can view home and index" do
@@ -75,7 +75,7 @@ class ArticlePermissionsTest < ActionDispatch::IntegrationTest
 
     patch article_path(@article), params: {
       article: { title: "Change not allowed" }
-  }
+    }
     assert_response :not_found
     assert_equal "Test Article", @article.reload.title
   end

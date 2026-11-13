@@ -18,6 +18,7 @@ class ArticlesController < ApplicationController
       Article.order(created_at: :desc, id: :desc)
       .group_by(&:category)
       .transform_values { |items| items.first(3) }
+      .sort.to_h # show categories alphabetically
   end
 
   def index
