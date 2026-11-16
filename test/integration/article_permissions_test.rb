@@ -166,6 +166,21 @@ class ArticlePermissionsTest < ActionDispatch::IntegrationTest
     assert_select "section[aria-labelledby=trending-heading] h3 a", text: "Breaking 0", count: 0
   end
 
+  test "header has a light/dark theme switch" do
+    get root_path
+    assert_select "header button[data-controller=theme][data-action=?]", "theme#toggle"
+  end
+
+  test "article index can be searched by title or content" do
+    Article.create!(title: "Match Report", content: "A thrilling final", category: "Sports", user: @editor)
+
+    get articles_path(q: "thrilling")
+
+    assert_response :success
+    assert_select "h2 a", text: "Match Report"
+    assert_select "h2 a", text: "Test Article", count: 0
+  end
+
   test "nav bar links to every category" do
     Article.create!(title: "Match Report", content: "Body", category: "Sports", user: @editor)
 

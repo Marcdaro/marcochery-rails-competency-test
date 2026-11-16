@@ -30,6 +30,13 @@ class ArticlesController < ApplicationController
 
     @articles = Article.includes(:user).order(created_at: :desc, id: :desc)
     @articles = @articles.where(category: @category) if @category
+
+    # Optional ?q=keyword search from the header's search box (title or content)
+    @query = params[:q].to_s.strip.presence if params[:q].is_a?(String)
+    if @query
+      pattern = "%#{Article.sanitize_sql_like(@query)}%"
+      @articles = @articles.where("title LIKE :pattern OR content LIKE :pattern", pattern: pattern)
+    end
   end
 
   def show
