@@ -1,0 +1,13 @@
+/ One of the smaller stories stacked beside the lead story
+article class="group relative flex gap-4 py-4 first:pt-0 last:pb-0"
+  div aria-hidden="true" class="relative h-24 w-32 shrink-0 overflow-hidden rounded-md bg-gradient-to-br #{story_gradient(article.category)} sm:h-28 sm:w-40"
+    span class="absolute right-2 bottom-0 font-serif text-6xl leading-none font-black text-white/15 select-none" = article.category.first
+
+  div class="min-w-0"
+    - if show_category
+      p class="text-xs font-semibold tracking-wide text-accent uppercase" = article.category
+    h3 class="mt-1 font-serif text-lg leading-snug font-bold text-ink"
+      = link_to article.title, article_path(article), class: "after:absolute after:inset-0 group-hover:underline"
+    p class="mt-2 flex items-center gap-1.5 text-xs font-medium text-muted"
+      = render "articles/clock_icon"
+      = read_time(article)

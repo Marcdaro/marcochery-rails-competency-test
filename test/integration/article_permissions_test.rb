@@ -150,8 +150,20 @@ class ArticlePermissionsTest < ActionDispatch::IntegrationTest
 
     get root_path
 
-    assert_select "h3 a", text: /\ASports \d\z/, count: 3
-    assert_select "h3 a", text: "Test Article"
+    assert_select "section[data-category=Sports] h3 a", text: /\ASports \d\z/, count: 3
+    assert_select "section[data-category=Test] h3 a", text: "Test Article"
+  end
+
+  test "homepage trending section shows the three newest stories" do
+    4.times do |i|
+      Article.create!(title: "Breaking #{i}", content: "Body", category: "World", user: @editor)
+    end
+
+    get root_path
+
+    assert_select "section[aria-labelledby=trending-heading] h3 a", count: 3
+    assert_select "section[aria-labelledby=trending-heading] h3 a", text: "Breaking 3"
+    assert_select "section[aria-labelledby=trending-heading] h3 a", text: "Breaking 0", count: 0
   end
 
   test "nav bar links to every category" do

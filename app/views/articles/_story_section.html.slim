@@ -1,0 +1,8 @@
+/ A homepage section: one large lead story on the left, the next two stacked on the right
+- lead, *others = articles
+.grid.gap-6 class="lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"
+  = render "articles/lead_story", article: lead
+  - if others.any?
+    div class="divide-y divide-line"
+      - others.each do |article|
+        = render "articles/side_story", article: article, show_category: show_category

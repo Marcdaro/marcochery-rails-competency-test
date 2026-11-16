@@ -1,35 +1,19 @@
-/ Two columns on large screens: category sections (main) + latest headlines (sidebar).
-/ On small screens the sidebar drops below the main content.
-div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_18rem]"
+- if @trending_articles.empty?
+  p.py-16.text-center.text-muted No articles have been published yet.
+- else
+  / Trending Now: the three newest stories from any category
+  section.mb-12 aria-labelledby="trending-heading"
+    div class="mb-5"
+      h2#trending-heading class="border-l-4 border-red-600 pl-3 font-serif text-3xl font-bold text-ink" Trending Now
+      p class="mt-1 pl-4 text-sm text-muted" The newest stories from across the site.
+    = render "articles/story_section", articles: @trending_articles, show_category: true
 
-  / Main content: the newest 3 articles from each category
-  div
-    - if @articles_by_category.empty?
-      p.py-16.text-center.text-slate-500 No articles have been published yet.
-
-    - @articles_by_category.each do |category, articles|
-      section.mb-12
-        div class="mb-5 flex items-baseline justify-between gap-4 border-t-2 border-slate-900 pt-2"
-          h2.font-serif.text-2xl.font-bold.text-slate-900
-            = link_to category, articles_path(category: category), class: "hover:text-red-700"
-          = link_to "More #{category} →", articles_path(category: category), class: "link text-sm whitespace-nowrap"
-
-        div class="grid gap-6 md:grid-cols-3 md:divide-x md:divide-slate-200"
-          - articles.each do |article|
-            article class="md:px-5 md:first:pl-0 md:last:pr-0"
-              h3.font-serif.text-xl.leading-snug.font-bold.text-slate-900
-                = link_to article.title, article_path(article), class: "hover:text-red-700"
-              p.mt-2.text-sm.leading-relaxed.text-slate-600 = truncate(article.content, length: 140)
-              p.mt-3.text-xs.tracking-wide.text-slate-400.uppercase = article.created_at.strftime("%b %-d, %Y")
-
-  / Sidebar: newest headlines from every category. Sticks below the header on large screens.
-  aside
-    div class="lg:sticky lg:top-48"
-      h2 class="border-t-2 border-slate-900 pt-2 font-serif text-xl font-bold text-slate-900" Latest
-      ol.mt-2.divide-y.divide-slate-200
-        - @latest_articles.each do |article|
-          li.py-3
-            p.text-xs.font-semibold.tracking-wide.text-red-700.uppercase = article.category
-            = link_to article.title, article_path(article),
-              class: "mt-1 block font-serif leading-snug font-semibold text-slate-900 hover:text-red-700"
-            p.mt-1.text-xs.text-slate-400 = "#{time_ago_in_words(article.created_at)} ago"
+  / One section per category, alphabetically, each with its newest three stories
+  - @articles_by_category.each do |category, articles|
+    section.mb-12.border-t.border-strong.pt-5 data-category=category
+      div class="mb-5 flex items-baseline justify-between gap-4"
+        h2 class="border-l-4 border-red-600 pl-3 font-serif text-3xl font-bold text-ink"
+          = link_to category, articles_path(category: category), class: "hover:text-accent-hover"
+        = link_to "More #{category} →", articles_path(category: category),
+          class: "text-sm font-semibold whitespace-nowrap text-accent hover:text-accent-hover"
+      = render "articles/story_section", articles: articles, show_category: false

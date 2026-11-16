@@ -20,8 +20,8 @@ class ArticlesController < ApplicationController
       .transform_values { |items| items.first(3) }
       .sort.to_h # show categories alphabetically
 
-    # Sidebar: the newest headlines across every category
-    @latest_articles = Article.order(created_at: :desc, id: :desc).limit(6)
+    # Trending Now: the three newest stories across every category
+    @trending_articles = Article.order(created_at: :desc, id: :desc).limit(3)
   end
 
   def index
