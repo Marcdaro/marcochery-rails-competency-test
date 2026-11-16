@@ -2,5 +2,5 @@
   p.mb-6 = link_to "← Back to Users", admin_users_path, class: "link text-sm"
 
   div class="card p-6 sm:p-8"
-    h1.mb-6.text-2xl.font-extrabold.tracking-tight.text-slate-900 = "Edit #{@user.email}"
+    h1.mb-6.text-2xl.font-extrabold.tracking-tight.text-ink = "Edit #{@user.email}"
     = render "form", user: @user

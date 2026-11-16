@@ -20,8 +20,8 @@ class ArticlesController < ApplicationController
       .transform_values { |items| items.first(3) }
       .sort.to_h # show categories alphabetically
 
-    # Sidebar: the newest headlines across every category
-    @latest_articles = Article.order(created_at: :desc, id: :desc).limit(6)
+    # Trending Now: the three newest stories across every category
+    @trending_articles = Article.order(created_at: :desc, id: :desc).limit(3)
   end
 
   def index
@@ -30,6 +30,13 @@ class ArticlesController < ApplicationController
 
     @articles = Article.includes(:user).order(created_at: :desc, id: :desc)
     @articles = @articles.where(category: @category) if @category
+
+    # Optional ?q=keyword search from the header's search box (title or content)
+    @query = params[:q].to_s.strip.presence if params[:q].is_a?(String)
+    if @query
+      pattern = "%#{Article.sanitize_sql_like(@query)}%"
+      @articles = @articles.where("title LIKE :pattern OR content LIKE :pattern", pattern: pattern)
+    end
   end
 
   def show

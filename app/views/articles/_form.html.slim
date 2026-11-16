@@ -1,6 +1,6 @@
 = form_with model: article, class: "space-y-5" do |form|
   - if article.errors.any?
-    .rounded-lg.border.border-red-200.bg-red-50.p-4.text-sm.text-red-800
+    .error-box
       h3.font-semibold Please fix these errors:
       ul.mt-2.list-disc.pl-5
         - article.errors.full_messages.each do |message|

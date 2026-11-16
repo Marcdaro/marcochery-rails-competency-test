@@ -1,7 +1,7 @@
 <div class="mx-auto max-w-md">
   <div class="card p-6 sm:p-8">
-    <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Sign up</h1>
-    <p class="mt-1 text-sm text-slate-500">Create a free account to read full articles.</p>
+    <h1 class="text-2xl font-extrabold tracking-tight text-ink">Sign up</h1>
+    <p class="mt-1 text-sm text-muted">Create a free account to read full articles.</p>
 
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "mt-6 space-y-5" }) do |f| %>
       <%= render "devise/shared/error_messages", resource: resource %>

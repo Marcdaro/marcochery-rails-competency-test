@@ -1,25 +1,30 @@
-div class="mb-6 flex flex-wrap items-end justify-between gap-4 border-b-2 border-slate-900 pb-3"
+div class="mb-6 flex flex-wrap items-end justify-between gap-4 border-b-2 border-strong pb-3"
   div
-    - if @category
+    - if @category || @query
       p.mb-1.text-sm = link_to "← All Articles", articles_path, class: "link"
-    h1.font-serif.text-4xl.font-black.tracking-tight.text-slate-900 = @category || "All Articles"
-    p.mt-1.text-sm.text-slate-500 = pluralize(@articles.size, "article")
+    h1.font-serif.text-4xl.font-black.tracking-tight.text-ink = @category || "All Articles"
+    - if @query
+      p.mt-1.text-sm.text-body = "Search results for “#{@query}”"
+    p.mt-1.text-sm.text-muted = pluralize(@articles.size, "article")
 
   - if user_signed_in? && current_user.has_role?(:editor)
     = link_to "+ Create Article", new_article_path, class: "btn btn-primary"
 
 - if @articles.empty?
-  p.py-16.text-center.text-slate-500
-    = @category ? "No articles in #{@category} yet." : "No articles have been published yet."
+  p.py-16.text-center.text-muted
+    - if @query
+      = "No articles match “#{@query}”."
+    - else
+      = @category ? "No articles in #{@category} yet." : "No articles have been published yet."
 
-.divide-y.divide-slate-200
+.divide-y.divide-line
   - @articles.each do |article|
     article.py-6
       - unless @category
         = link_to article.category, articles_path(category: article.category),
-          class: "text-xs font-semibold tracking-wide text-red-700 uppercase hover:underline"
-      h2.mt-1.font-serif.text-2xl.leading-snug.font-bold.text-slate-900
-        = link_to article.title, article_path(article), class: "hover:text-red-700"
-      p.mt-2.max-w-3xl.leading-relaxed.text-slate-600 = truncate(article.content, length: 220)
-      p.mt-3.text-xs.text-slate-400
+          class: "text-xs font-semibold tracking-wide text-accent uppercase hover:underline"
+      h2.mt-1.font-serif.text-2xl.leading-snug.font-bold.text-ink
+        = link_to article.title, article_path(article), class: "hover:text-accent-hover"
+      p.mt-2.max-w-3xl.leading-relaxed.text-body = truncate(article.content, length: 220)
+      p.mt-3.text-xs.text-muted
         = "By #{article.user.email} · #{article.created_at.strftime('%b %-d, %Y')}"
