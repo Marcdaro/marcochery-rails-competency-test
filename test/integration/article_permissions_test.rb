@@ -187,4 +187,22 @@ class ArticlePermissionsTest < ActionDispatch::IntegrationTest
       }
     end
   end
+
+  test "admins cannot edit articles" do
+    sign_in @admin
+
+    get edit_article_path(@article)
+    assert_response :redirect
+
+    patch article_path(@article), params: { article: { title: "Admin Edit" } }
+    assert_equal "Test Article", @article.reload.title
+  end
+
+  test "admins cannot delete articles" do
+    sign_in @admin
+
+    assert_no_difference("Article.count") do
+      delete article_path(@article)
+    end
+  end
 end
