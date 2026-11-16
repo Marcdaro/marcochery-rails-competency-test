@@ -42,15 +42,24 @@ The seeded articles live in plain text files, one per article, under
 ```
 ---
 title: "My Article Title"
+trending: 1
 ---
 
 First paragraph.
 
 Second paragraph (leave a blank line between paragraphs).
+A line right below another line stays in the same paragraph, on its own line (handy for lists).
 ```
 
-Files load in name order (`01-…`, `02-…`); the last one in a folder is the newest. Editing a
-file and running `bin/rails db:seed` again updates that article.
+- **Order:** files load in name order (`01-…`, `02-…`). The last one in a folder is the newest,
+  so it leads that category's homepage section.
+- **Trending:** `trending:` is optional. `1`, `2` or `3` puts the article in that slot of
+  Trending Now. Empty slots are filled with the newest stories.
+- **Images:** an image with the same name next to the text file
+  (`01-my-article-title.jpg`, `.jpeg`, `.png` or `.webp`) becomes the article's photo.
+- **Updating:** editing a file and running `bin/rails db:seed` again updates that article.
+  Articles are matched by title, so renaming a title creates a new article. To start fresh, run
+  `bin/rails runner 'Article.destroy_all'` and then `bin/rails db:seed`.
 
 ### Demo accounts
 
@@ -66,10 +75,15 @@ You can also create a regular `user` account from the **Sign Up** page.
 
 ## Site features
 
-- **Homepage:** Trending Now (the three newest stories from any category), then one section
-  per category, alphabetically, with its newest three stories. Each section has a large lead
-  story and two smaller stories beside it. Until articles have images, each category gets
-  a placeholder gradient.
+- **Homepage:** Trending Now (three hand-picked stories, topped up with the newest), then one
+  section per category, alphabetically, with its newest three stories. Each section has a
+  large lead story and two smaller stories beside it.
+- **Article images:** editors can upload a photo (JPEG, PNG, WebP or GIF, up to 5 MB) when
+  creating or editing an article, and replace or remove it later. It's shown behind the
+  lead-story headline, as a thumbnail on side stories and the All Articles list, and full
+  width on the article page. Articles without one get a category-coloured placeholder.
+  Files are stored with Active Storage in `storage/`. Images are shown at their uploaded size
+  (CSS crops them to fit), so no image-processing library is needed locally.
 - **Navigation:** the header links to every category. The search box searches article titles
   and content.
 - **Light and dark themes:** the moon/sun button in the header switches theme and remembers
@@ -104,16 +118,18 @@ Permissions are enforced on the server, not just hidden in the views:
 bin/rails test
 ```
 
-48 Minitest tests:
+56 Minitest tests:
 
-- `test/integration/article_permissions_test.rb` (21): guest, user, editor and admin access;
+- `test/integration/article_permissions_test.rb` (26): guest, user, editor and admin access;
   editors editing and deleting only their own articles; admins blocked from creating,
   editing and deleting articles; invalid input; the three-per-category homepage and Trending
-  Now; category nav and filtering; search; the theme switch.
+  Now (newest and hand-picked); category nav and filtering; search; the theme switch;
+  uploading, replacing, removing and displaying article images.
 - `test/integration/admin_users_test.rb` (16): admins listing, creating and editing users and
   roles; password handling; admins can't change their own role; guests, users and editors
   are kept out of the admin pages.
-- `test/models/article_test.rb` (5): required title, content and category; belongs to a user.
+- `test/models/article_test.rb` (8): required title, content and category; belongs to a user;
+  image attachment with type and size limits.
 - `test/models/user_test.rb` (6): required email and password; default `user` role;
   editor and admin roles; a user has many articles.
 
