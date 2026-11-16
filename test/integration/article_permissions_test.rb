@@ -177,6 +177,49 @@ class ArticlePermissionsTest < ActionDispatch::IntegrationTest
     assert_equal [ "First Pick", "Second Pick", "Newest Story" ], trending
   end
 
+  test "editors can upload an image with a new article" do
+    sign_in @editor
+
+    post articles_path, params: {
+      article: {
+        title: "Pictured Article", content: "Body", category: "Test",
+        image: fixture_file_upload("sample.jpg", "image/jpeg")
+      }
+    }
+
+    assert Article.find_by(title: "Pictured Article").image.attached?
+  end
+
+  test "editors can replace and remove an article image" do
+    sign_in @editor
+    @article.image.attach(io: file_fixture("sample.jpg").open, filename: "old.jpg", content_type: "image/jpeg")
+
+    get edit_article_path(@article)
+    assert_select "img[alt=?]", "Current image"
+    assert_select "input[type=checkbox][name=?]", "article[remove_image]"
+
+    patch article_path(@article), params: { article: { image: fixture_file_upload("sample.jpg", "image/jpeg") } }
+    assert @article.reload.image.attached?
+
+    patch article_path(@article), params: { article: { remove_image: "1" } }
+    assert_not @article.reload.image.attached?
+  end
+
+  test "non-image uploads are rejected" do
+    sign_in @editor
+
+    assert_no_difference("Article.count") do
+      post articles_path, params: {
+        article: {
+          title: "Bad Upload", content: "Body", category: "Test",
+          image: fixture_file_upload("not_an_image.txt", "text/plain")
+        }
+      }
+    end
+    assert_response :unprocessable_entity
+    assert_select "li", text: "Image must be a JPEG, PNG, WebP or GIF"
+  end
+
   test "header has a light/dark theme switch" do
     get root_path
     assert_select "header button[data-controller=theme][data-action=?]", "theme#toggle"

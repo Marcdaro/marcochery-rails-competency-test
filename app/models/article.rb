@@ -8,10 +8,18 @@ class Article < ApplicationRecord
   # Stored with Active Storage (storage/ on disk).
   has_one_attached :image
 
+  # Ticking "Remove image" on the form removes it, unless a new image was uploaded at the same time
+  attribute :remove_image, :boolean, default: false
+  before_validation :clear_image, if: :remove_image
+
   validates :title, :content, :category, presence: true
   validate :image_is_a_reasonable_picture
 
   private
+
+  def clear_image
+    self.image = nil unless attachment_changes.key?("image")
+  end
 
   def image_is_a_reasonable_picture
     return unless image.attached?
