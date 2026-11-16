@@ -1,6 +1,6 @@
-h1 Create new article
+.mx-auto.max-w-3xl
+  p.mb-6 = link_to "← Back to Articles", articles_path, class: "link text-sm"
 
-
-= render "form", article: @article
-
-= link_to "Back", articles_path
+  div class="card p-6 sm:p-8"
+    h1.mb-6.text-2xl.font-extrabold.tracking-tight.text-slate-900 Create a New Article
+    = render "form", article: @article

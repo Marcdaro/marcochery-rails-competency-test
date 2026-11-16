@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+/*
+ * Reusable building blocks used across the views.
+ * Each one is just a bundle of Tailwind utility classes (@apply),
+ * so changing a look here updates it everywhere.
+ */
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2;
+  }
+  .btn-primary {
+    @apply bg-red-700 text-white hover:bg-red-800 focus-visible:outline-red-700;
+  }
+  .btn-secondary {
+    @apply bg-white text-slate-700 ring-1 ring-slate-300 ring-inset hover:bg-slate-50 focus-visible:outline-slate-500;
+  }
+  .btn-danger {
+    @apply bg-white text-red-700 ring-1 ring-red-200 ring-inset hover:bg-red-50 focus-visible:outline-red-700;
+  }
+
+  /* Forms */
+  .form-label {
+    @apply mb-1 block text-sm font-medium text-slate-700;
+  }
+  .form-input {
+    @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400 focus:border-red-600 focus:ring-2 focus:ring-red-600/20 focus:outline-none;
+  }
+  .form-hint {
+    @apply mt-1 text-xs text-slate-500;
+  }
+
+  /* Containers */
+  .card {
+    @apply rounded-xl border border-slate-200 bg-white shadow-sm;
+  }
+
+  /* Small category label */
+  .badge {
+    @apply inline-block rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold tracking-wide text-red-700 uppercase;
+  }
+
+  /* Text links inside content */
+  .link {
+    @apply font-medium text-red-700 hover:text-red-800 hover:underline;
+  }
+}

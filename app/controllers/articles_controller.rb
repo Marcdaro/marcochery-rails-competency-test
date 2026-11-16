@@ -19,10 +19,17 @@ class ArticlesController < ApplicationController
       .group_by(&:category)
       .transform_values { |items| items.first(3) }
       .sort.to_h # show categories alphabetically
+
+    # Sidebar: the newest headlines across every category
+    @latest_articles = Article.order(created_at: :desc, id: :desc).limit(6)
   end
 
   def index
-    @articles = Article.order(created_at: :desc, id: :desc)
+    # Optional ?category=World filter, used by the category links in the nav bar
+    @category = params[:category].presence if params[:category].is_a?(String)
+
+    @articles = Article.includes(:user).order(created_at: :desc, id: :desc)
+    @articles = @articles.where(category: @category) if @category
   end
 
   def show

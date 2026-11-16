@@ -154,6 +154,26 @@ class ArticlePermissionsTest < ActionDispatch::IntegrationTest
     assert_select "h3 a", text: "Test Article"
   end
 
+  test "nav bar links to every category" do
+    Article.create!(title: "Match Report", content: "Body", category: "Sports", user: @editor)
+
+    get root_path
+
+    assert_select "nav[aria-label=Sections] a[href=?]", articles_path(category: "Sports"), text: "Sports"
+    assert_select "nav[aria-label=Sections] a[href=?]", articles_path(category: "Test"), text: "Test"
+  end
+
+  test "article index can be filtered by category" do
+    Article.create!(title: "Match Report", content: "Body", category: "Sports", user: @editor)
+
+    get articles_path(category: "Sports")
+
+    assert_response :success
+    assert_select "h1", text: "Sports"
+    assert_select "h2 a", text: "Match Report"
+    assert_select "h2 a", text: "Test Article", count: 0
+  end
+
   test "admins cannot create articles" do
     sign_in @admin
 

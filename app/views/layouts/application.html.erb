@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html class="h-full">
   <head>
-    <title><%= content_for(:title) || "Marcochery Rails Competency Test" %></title>
+    <title><%= content_for(:title) || "Marco News Network" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Marcochery Rails Competency Test">
+    <meta name="application-name" content="Marco News Network">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -18,36 +18,73 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%# Tailwind's compiled stylesheet (built from app/assets/tailwind/application.css) %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <header>
-      <nav>
-        <%= link_to "Home", root_path %> |
-        <%= link_to "Articles", articles_path %> |
-        
-        <% if user_signed_in? %>
-          <span><%= current_user.email %></span>
+  <body class="flex min-h-full flex-col bg-white text-slate-800 antialiased">
+    <%# The whole header sticks to the top of the screen while the page scrolls %>
+    <header class="sticky top-0 z-20 bg-white shadow-sm">
+      <%# 1. Utility strip: today's date and account links %>
+      <div class="border-b border-slate-200">
+        <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-1.5 text-xs text-slate-500">
+          <span class="hidden sm:inline"><%= Date.current.strftime("%A, %B %-d, %Y") %></span>
 
-          <%= button_to "Logout", destroy_user_session_path, method: :delete %>
-        <% else %>
-          <%= link_to "Login", new_user_session_path %> |
-          <%= link_to "Sign Up", new_user_registration_path %>
+          <div class="ml-auto flex items-center gap-3">
+            <% if user_signed_in? %>
+              <%= link_to current_user.email, edit_user_registration_path,
+                    class: "hover:text-slate-900", title: "Account settings" %>
+              <% unless current_user.role == :user %>
+                <span class="badge"><%= current_user.role %></span>
+              <% end %>
+              <%= button_to "Log out", destroy_user_session_path, method: :delete,
+                    class: "cursor-pointer font-semibold text-slate-700 hover:text-slate-900" %>
+            <% else %>
+              <%= link_to "Log in", new_user_session_path, class: "font-semibold text-slate-700 hover:text-slate-900" %>
+              <%= link_to "Sign up", new_user_registration_path, class: "btn btn-primary px-3 py-1 text-xs" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <%# 2. Masthead %>
+      <div class="mx-auto max-w-6xl px-4 py-3 text-center sm:py-4">
+        <%= link_to root_path, class: "font-serif text-3xl font-black tracking-tight text-slate-900 sm:text-5xl" do %>
+          Marco <span class="text-red-700">News</span> Network
         <% end %>
-      </nav>
+      </div>
 
+      <%# 3. Section nav: Home, one link per category, All Articles %>
+      <nav aria-label="Sections" class="border-t border-b-2 border-t-slate-200 border-b-slate-900">
+        <div class="mx-auto max-w-6xl overflow-x-auto px-4">
+          <ul class="flex justify-start gap-6 text-sm font-semibold tracking-wide whitespace-nowrap uppercase sm:justify-center">
+            <li><%= section_nav_link "Home", root_path, active: current_section == :home %></li>
+            <% nav_categories.each do |category| %>
+              <li><%= section_nav_link category, articles_path(category: category), active: current_section == category %></li>
+            <% end %>
+            <li><%= section_nav_link "All Articles", articles_path, active: current_section == :all %></li>
+          </ul>
+        </div>
+      </nav>
     </header>
 
-    <% if notice.present? %>
-      <p class="notice"><%= notice %></p>
-    <% end %>
-    <% if alert.present? %>
-      <p class="alert"><%= alert %></p>
-    <% end %>
+    <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
+      <% if notice.present? %>
+        <p class="notice mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"><%= notice %></p>
+      <% end %>
+      <% if alert.present? %>
+        <p class="alert mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"><%= alert %></p>
+      <% end %>
 
-    <%= yield %>
+      <%= yield %>
+    </main>
+
+    <footer class="mt-8 border-t-2 border-slate-900 bg-white">
+      <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-6 text-sm text-slate-500">
+        <span class="font-serif font-bold text-slate-900">Marco News Network</span>
+        <span>Built with Ruby on Rails</span>
+      </div>
+    </footer>
   </body>
 </html>
