@@ -64,11 +64,24 @@ The seeds create these local-only accounts (password `password123` for each):
 
 You can also create a regular `user` account from the **Sign Up** page.
 
+## Site features
+
+- **Homepage:** Trending Now (the three newest stories from any category), then one section
+  per category, alphabetically, with its newest three stories. Each section has a large lead
+  story and two smaller stories beside it. Until articles have images, each category gets
+  a placeholder gradient.
+- **Navigation:** the header links to every category. The search box searches article titles
+  and content.
+- **Light and dark themes:** the moon/sun button in the header switches theme and remembers
+  the choice in the browser. First-time visitors get their system setting. The colours are
+  named tokens in `app/assets/tailwind/application.css` (`--theme-page`, `--theme-ink`, …),
+  with one set for each theme.
+
 ## Roles and permissions
 
 | Role | Can do |
 |---|---|
-| Guest (not logged in) | View the homepage (newest 3 articles from each category) and the article index. Opening an article sends them to the signup page. Can sign up and log in. |
+| Guest (not logged in) | View the homepage (Trending Now, plus the newest 3 articles from each category) and the article index, and search articles. Opening an article sends them to the signup page. Can sign up and log in. |
 | User | Everything a guest can, plus read full articles and log out. |
 | Editor | Everything a user can, plus create articles and edit or delete **their own** articles. |
 | Admin | Everything a user can, plus create users, edit users (email, password) and set or change their role at `/admin/users`. Cannot create, edit or delete articles, and cannot change their own role. |
@@ -91,12 +104,12 @@ Permissions are enforced on the server, not just hidden in the views:
 bin/rails test
 ```
 
-45 Minitest tests:
+48 Minitest tests:
 
-- `test/integration/article_permissions_test.rb` (18): guest, user, editor and admin access;
+- `test/integration/article_permissions_test.rb` (21): guest, user, editor and admin access;
   editors editing and deleting only their own articles; admins blocked from creating,
-  editing and deleting articles; invalid input; the three-per-category homepage; category
-  nav and filtering.
+  editing and deleting articles; invalid input; the three-per-category homepage and Trending
+  Now; category nav and filtering; search; the theme switch.
 - `test/integration/admin_users_test.rb` (16): admins listing, creating and editing users and
   roles; password handling; admins can't change their own role; guests, users and editors
   are kept out of the admin pages.
