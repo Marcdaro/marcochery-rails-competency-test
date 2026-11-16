@@ -1,0 +1,19 @@
+---
+title: "Massive Microsoft 365 Outage Disrupts Services Worldwide"
+---
+
+A widespread Microsoft 365 outage left businesses, government agencies, and millions of users struggling to access essential online services beginning Thursday, November 12, 2026.
+
+The disruption affected several major Microsoft platforms, including Outlook, Microsoft Teams, Exchange Online, SharePoint, and Microsoft Copilot.
+
+Users reported problems signing into accounts, sending emails, accessing documents, and communicating through workplace applications.
+
+Microsoft identified infrastructure problems involving server health checks and increased processing loads, which caused portions of its cloud services to become unavailable.
+
+The company implemented recovery measures, including restarting affected servers and adjusting infrastructure configurations.
+
+Services improved throughout November 13 and 14, although some organizations continued experiencing delayed email deliveries during recovery.
+
+The incident renewed concerns about how heavily businesses and public institutions depend on centralized cloud infrastructure.
+
+For organizations worldwide, the outage served as another reminder of the importance of backup communication systems and business continuity planning.

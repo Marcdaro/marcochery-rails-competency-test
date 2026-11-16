@@ -1,0 +1,19 @@
+---
+title: "ChatGPT Is Changing Its Usage Limits in December — Will Users Have to Pay More?"
+---
+
+OpenAI has announced changes to how usage limits will work across ChatGPT and Codex beginning in December 2026.
+
+Under the updated system, Plus, Pro, and Business subscribers will have a shared usage allowance across both services, with usage measured in tokens.
+
+More advanced models and complex tasks will generally consume more of that allowance. However, regular Instant chats will not draw from it.
+
+Does this mean every ChatGPT conversation will suddenly cost money?
+
+No. Existing subscriptions will continue to include usage, and users will not automatically be charged for every message.
+
+Those who reach their included limits can wait for their allowance to reset, upgrade their subscription, or purchase additional credits for eligible features.
+
+OpenAI says most subscribers should not need to wait for resets more frequently than they currently do.
+
+The changes reflect a broader shift toward flexible, usage-based access to increasingly powerful AI tools.
