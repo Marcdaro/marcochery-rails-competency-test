@@ -166,6 +166,17 @@ class ArticlePermissionsTest < ActionDispatch::IntegrationTest
     assert_select "section[aria-labelledby=trending-heading] h3 a", text: "Breaking 0", count: 0
   end
 
+  test "hand-picked trending stories come first, in order" do
+    Article.create!(title: "Newest Story", content: "Body", category: "World", user: @editor)
+    Article.create!(title: "Second Pick", content: "Body", category: "World", user: @editor, trending_position: 2)
+    Article.create!(title: "First Pick", content: "Body", category: "Sports", user: @editor, trending_position: 1)
+
+    get root_path
+
+    trending = css_select("section[aria-labelledby=trending-heading] h3 a").map { |link| link.text.strip }
+    assert_equal [ "First Pick", "Second Pick", "Newest Story" ], trending
+  end
+
   test "header has a light/dark theme switch" do
     get root_path
     assert_select "header button[data-controller=theme][data-action=?]", "theme#toggle"

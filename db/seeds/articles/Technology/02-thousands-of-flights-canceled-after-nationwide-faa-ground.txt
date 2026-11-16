@@ -1,5 +1,6 @@
 ---
 title: "Thousands of Flights Canceled After Nationwide FAA Ground Stop"
+trending: 1
 ---
 
 Air travelers across the United States faced widespread disruptions following a Federal Aviation Administration ground stop on Friday, November 13, 2026.

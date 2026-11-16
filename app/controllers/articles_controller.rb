@@ -20,8 +20,11 @@ class ArticlesController < ApplicationController
       .transform_values { |items| items.first(3) }
       .sort.to_h # show categories alphabetically
 
-    # Trending Now: the three newest stories across every category
-    @trending_articles = Article.order(created_at: :desc, id: :desc).limit(3)
+    # Trending Now: hand-picked stories (trending_position 1-3) first,
+    # then the newest stories fill any empty slots
+    picked = Article.where.not(trending_position: nil).order(:trending_position).limit(3).to_a
+    newest = Article.where.not(id: picked.map(&:id)).order(created_at: :desc, id: :desc).limit(3 - picked.size)
+    @trending_articles = picked + newest
   end
 
   def index

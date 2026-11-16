@@ -24,6 +24,7 @@ end
 #
 #   ---
 #   title: "My Article Title"
+#   trending: 1        (optional: 1, 2 or 3 puts it in that Trending Now slot)
 #   ---
 #
 #   First paragraph.
@@ -42,13 +43,14 @@ Dir.glob(ARTICLES_DIR.join("*/*.txt")).sort.each do |path|
   text = File.read(path)
   match = text.match(FRONT_MATTER) or raise "#{path} is missing its --- title --- header"
 
-  title = YAML.safe_load(match[1]).fetch("title")
+  header = YAML.safe_load(match[1])
+  title = header.fetch("title")
   category = File.basename(File.dirname(path))
   content = match.post_match.strip
 
   article = Article.find_or_initialize_by(title: title)
   article.user ||= editor
-  article.update!(category: category, content: content)
+  article.update!(category: category, content: content, trending_position: header["trending"])
 end
 
 puts "Seeded #{User.count} users and #{Article.count} articles."
