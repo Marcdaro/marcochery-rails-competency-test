@@ -1,7 +1,7 @@
 <div class="mx-auto max-w-md">
   <div class="card p-6 sm:p-8">
-    <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Log in</h1>
-    <p class="mt-1 text-sm text-slate-500">Welcome back. Log in to read full articles.</p>
+    <h1 class="text-2xl font-extrabold tracking-tight text-ink">Log in</h1>
+    <p class="mt-1 text-sm text-muted">Welcome back. Log in to read full articles.</p>
 
     <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "mt-6 space-y-5" }) do |f| %>
       <div>
@@ -16,8 +16,8 @@
 
       <% if devise_mapping.rememberable? %>
         <div class="flex items-center gap-2">
-          <%= f.check_box :remember_me, class: "h-4 w-4 rounded border-slate-300 accent-red-700" %>
-          <%= f.label :remember_me, class: "text-sm text-slate-700" %>
+          <%= f.check_box :remember_me, class: "h-4 w-4 rounded border-strong accent-red-700" %>
+          <%= f.label :remember_me, class: "text-sm text-ink" %>
         </div>
       <% end %>
 
