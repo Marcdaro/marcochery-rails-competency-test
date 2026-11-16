@@ -68,3 +68,5 @@ end
 gem "devise", "~> 5.0"
 gem "petergate", "~> 4.0"
 gem "slim-rails", "~> 4.0"
+
+gem "tailwindcss-rails", "~> 4.7"

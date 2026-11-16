@@ -1,21 +1,27 @@
-= form_with model: article do |form|
+= form_with model: article, class: "space-y-5" do |form|
   - if article.errors.any?
-    h3 Please fix these errors:
-    ul
-      - article.errors.full_messages.each do |message|
-        li = message
+    .rounded-lg.border.border-red-200.bg-red-50.p-4.text-sm.text-red-800
+      h3.font-semibold Please fix these errors:
+      ul.mt-2.list-disc.pl-5
+        - article.errors.full_messages.each do |message|
+          li = message
 
   div
-    = form.label :title
-    = form.text_field :title
+    = form.label :title, class: "form-label"
+    = form.text_field :title, class: "form-input", placeholder: "A clear, catchy headline"
 
   div
-    = form.label :category
-    = form.text_field :category
+    = form.label :category, class: "form-label"
+    = form.text_field :category, class: "form-input", list: "category-options", placeholder: "e.g. Technology"
+    datalist#category-options
+      - Article.distinct.order(:category).pluck(:category).each do |category|
+        option value=category
+    p.form-hint Pick an existing category or type a new one.
 
   div
-    = form.label :content
-    = form.text_area :content, rows: 10
+    = form.label :content, class: "form-label"
+    = form.text_area :content, rows: 14, class: "form-input leading-relaxed"
+    p.form-hint Leave a blank line between paragraphs.
 
   div
-    = form.submit
+    = form.submit class: "btn btn-primary"

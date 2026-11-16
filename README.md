@@ -12,6 +12,7 @@ signed-in users can read full articles, and editors can publish and manage their
 | Authentication | Devise |
 | Roles | Petergate (`user`, `editor`, `admin`) |
 | Templates | Slim (article views) |
+| Styling | Tailwind CSS (`tailwindcss-rails`) |
 | Tests | Minitest |
 
 ## Setup
@@ -19,13 +20,36 @@ signed-in users can read full articles, and editors can publish and manage their
 ```bash
 bundle install
 bin/rails db:prepare
-bin/rails server
+bin/dev
 ```
 
 Then open http://localhost:3000.
 
-`bin/rails db:prepare` creates the database and runs `db/seeds.rb` on a fresh install.
-To load the sample data into an existing database, run `bin/rails db:seed`.
+- `bin/rails db:prepare` creates the database and runs `db/seeds.rb` on a fresh install.
+  To load the sample data into an existing database, run `bin/rails db:seed`.
+- `bin/dev` builds the Tailwind stylesheet, rebuilds it whenever a view changes, and starts
+  the server. (It installs the `foreman` gem the first time if it's missing.)
+- If you'd rather use `bin/rails server` directly, build the stylesheet first with
+  `bin/rails tailwindcss:build`. The compiled CSS isn't committed, so without that step
+  pages fail with a missing `tailwind.css` asset.
+
+### Sample articles
+
+The seeded articles live in plain text files, one per article, under
+`db/seeds/articles/<Category>/`. The folder name is the category, and each file looks like:
+
+```
+---
+title: "My Article Title"
+---
+
+First paragraph.
+
+Second paragraph (leave a blank line between paragraphs).
+```
+
+Files load in name order (`01-…`, `02-…`); the last one in a folder is the newest. Editing a
+file and running `bin/rails db:seed` again updates that article.
 
 ### Demo accounts
 
