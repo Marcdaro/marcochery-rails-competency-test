@@ -1,0 +1,40 @@
+- editing_self = user.persisted? && user == current_user
+
+= form_with model: [ :admin, user ], class: "space-y-5" do |form|
+  - if user.errors.any?
+    .rounded-lg.border.border-red-200.bg-red-50.p-4.text-sm.text-red-800
+      h3.font-semibold Please fix these errors:
+      ul.mt-2.list-disc.pl-5
+        - user.errors.full_messages.each do |message|
+          li = message
+
+  div
+    = form.label :email, class: "form-label"
+    = form.email_field :email, class: "form-input", autocomplete: "off"
+
+  div
+    = form.label :role, class: "form-label"
+    = form.select :role,
+      User::ROLES.map { |role| [ role.to_s.capitalize, role ] },
+      { selected: user.role },
+      class: "form-input",
+      disabled: editing_self
+    - if editing_self
+      p.form-hint You can't change your own role.
+    - else
+      p.form-hint Editors can write articles. Admins manage users but can't write articles.
+
+  div
+    = form.label :password, class: "form-label"
+    = form.password_field :password, class: "form-input", autocomplete: "new-password"
+    - if user.persisted?
+      p.form-hint Leave both password fields blank to keep the current password.
+    - else
+      p.form-hint At least #{Devise.password_length.min} characters.
+
+  div
+    = form.label :password_confirmation, class: "form-label"
+    = form.password_field :password_confirmation, class: "form-input", autocomplete: "new-password"
+
+  div
+    = form.submit user.persisted? ? "Update User" : "Create User", class: "btn btn-primary"

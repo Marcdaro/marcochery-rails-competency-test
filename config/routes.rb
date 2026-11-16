@@ -18,4 +18,9 @@ Rails.application.routes.draw do
   root "articles#home"
 
   resources :articles
+
+  # Admin-only user management: /admin/users, /admin/users/new, /admin/users/:id/edit
+  namespace :admin do
+    resources :users, only: [ :index, :new, :create, :edit, :update ]
+  end
 end

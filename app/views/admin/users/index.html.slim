@@ -1,0 +1,29 @@
+div class="mb-6 flex flex-wrap items-end justify-between gap-4 border-b-2 border-slate-900 pb-3"
+  div
+    h1.font-serif.text-4xl.font-black.tracking-tight.text-slate-900 Manage Users
+    p.mt-1.text-sm.text-slate-500 = pluralize(@users.size, "user")
+  = link_to "+ Create User", new_admin_user_path, class: "btn btn-primary"
+
+.card.overflow-x-auto
+  table.w-full.text-left.text-sm
+    thead.border-b.border-slate-200.bg-slate-50.text-xs.tracking-wide.text-slate-500.uppercase
+      tr
+        th.px-4.py-3.font-semibold Email
+        th.px-4.py-3.font-semibold Role
+        th.px-4.py-3.font-semibold Articles
+        th.px-4.py-3.font-semibold Joined
+        th.px-4.py-3
+          span.sr-only Actions
+    tbody.divide-y.divide-slate-200
+      - @users.each do |user|
+        tr
+          td.px-4.py-3.font-medium.text-slate-900
+            = user.email
+            - if user == current_user
+              span.ml-2.text-xs.text-slate-400 (you)
+          td.px-4.py-3
+            span.badge = user.role
+          td.px-4.py-3.text-slate-600 = user.articles.size
+          td.px-4.py-3.text-slate-600 = user.created_at.strftime("%b %-d, %Y")
+          td.px-4.py-3.text-right
+            = link_to "Edit", edit_admin_user_path(user), class: "link", "aria-label": "Edit #{user.email}"

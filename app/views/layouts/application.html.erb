@@ -38,6 +38,9 @@
               <% unless current_user.role == :user %>
                 <span class="badge"><%= current_user.role %></span>
               <% end %>
+              <% if current_user.has_role?(:admin) %>
+                <%= link_to "Manage Users", admin_users_path, class: "font-semibold text-red-700 hover:text-red-800" %>
+              <% end %>
               <%= button_to "Log out", destroy_user_session_path, method: :delete,
                     class: "cursor-pointer font-semibold text-slate-700 hover:text-slate-900" %>
             <% else %>
