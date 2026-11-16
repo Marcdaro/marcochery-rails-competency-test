@@ -220,6 +220,20 @@ class ArticlePermissionsTest < ActionDispatch::IntegrationTest
     assert_select "li", text: "Image must be a JPEG, PNG, WebP or GIF"
   end
 
+  test "article images show on the homepage, index and article page" do
+    @article.image.attach(io: file_fixture("sample.jpg").open, filename: "sample.jpg", content_type: "image/jpeg")
+
+    get root_path
+    assert_select "section[data-category=Test] img[src*=?]", "sample.jpg"
+
+    get articles_path
+    assert_select "img[src*=?]", "sample.jpg"
+
+    sign_in @reader
+    get article_path(@article)
+    assert_select "article img[alt=?][src*=?]", "Test Article", "sample.jpg"
+  end
+
   test "header has a light/dark theme switch" do
     get root_path
     assert_select "header button[data-controller=theme][data-action=?]", "theme#toggle"

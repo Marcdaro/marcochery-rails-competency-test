@@ -1,8 +1,7 @@
-/ The big story on the left of a section: placeholder image with the headline over it
-article class="group relative overflow-hidden rounded-lg bg-gradient-to-br #{story_gradient(article.category)} min-h-72 sm:min-h-80"
-  / Placeholder for the article's photo: a large faint category initial
-  span aria-hidden="true" class="pointer-events-none absolute -top-6 right-4 font-serif text-[12rem] leading-none font-black text-white/10 select-none"
-    = article.category.first
+/ The big story on the left of a section: the photo fills the card, with the headline over it
+article class="group relative min-h-72 overflow-hidden rounded-lg bg-neutral-900 sm:min-h-80"
+  = render "articles/story_image", article: article, letter_class: "-top-6 right-4 text-[12rem] text-white/10"
+  / Darkens the bottom of the photo so the white headline stays readable
   div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent"
 
   div class="relative flex h-full min-h-72 flex-col justify-between p-5 sm:min-h-80 sm:p-6"
