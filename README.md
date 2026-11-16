@@ -1,7 +1,8 @@
 # Simple News App
 
 A Ruby on Rails competency test: a small news site where guests can browse headlines,
-signed-in users can read full articles, and editors can publish and manage their own articles.
+signed-in users can read full articles, editors can publish and manage their own articles,
+and admins manage user accounts and roles.
 
 ## Stack
 
@@ -11,7 +12,7 @@ signed-in users can read full articles, and editors can publish and manage their
 | Database | SQLite |
 | Authentication | Devise |
 | Roles | Petergate (`user`, `editor`, `admin`) |
-| Templates | Slim (article views) |
+| Templates | Slim (article and admin views) |
 | Styling | Tailwind CSS (`tailwindcss-rails`) |
 | Tests | Minitest |
 
@@ -59,7 +60,7 @@ The seeds create these local-only accounts (password `password123` for each):
 |---|---|
 | `editor@example.com` | editor (author of the sample articles) |
 | `reader@example.com` | user |
-| `admin@example.com` | admin |
+| `admin@example.com` | admin (open **Manage Users** in the header) |
 
 You can also create a regular `user` account from the **Sign Up** page.
 
@@ -70,7 +71,7 @@ You can also create a regular `user` account from the **Sign Up** page.
 | Guest (not logged in) | View the homepage (newest 3 articles from each category) and the article index. Opening an article sends them to the signup page. Can sign up and log in. |
 | User | Everything a guest can, plus read full articles and log out. |
 | Editor | Everything a user can, plus create articles and edit or delete **their own** articles. |
-| Admin | Same article access as a user. Cannot create, edit or delete articles. |
+| Admin | Everything a user can, plus create users, edit users (email, password) and set or change their role at `/admin/users`. Cannot create, edit or delete articles, and cannot change their own role. |
 
 Permissions are enforced on the server, not just hidden in the views:
 
@@ -80,6 +81,9 @@ Permissions are enforced on the server, not just hidden in the views:
   who requests another editor's article gets a 404.
 - Strong parameters only accept `title`, `content` and `category`; the author is always the
   signed-in user.
+- `Admin::UsersController` is limited to admins with `access admin: [...]`. Only roles
+  Petergate knows about are accepted, a blank password on the edit form keeps the current
+  one, and an admin can't change their own role (so the last admin can't lock everyone out).
 
 ## Tests
 
@@ -87,18 +91,20 @@ Permissions are enforced on the server, not just hidden in the views:
 bin/rails test
 ```
 
-25 Minitest tests:
+45 Minitest tests:
 
-- `test/integration/article_permissions_test.rb` (14): guest, user, editor and admin access;
-  editors editing and deleting only their own articles; invalid input; the
-  three-per-category homepage.
+- `test/integration/article_permissions_test.rb` (18): guest, user, editor and admin access;
+  editors editing and deleting only their own articles; admins blocked from creating,
+  editing and deleting articles; invalid input; the three-per-category homepage; category
+  nav and filtering.
+- `test/integration/admin_users_test.rb` (16): admins listing, creating and editing users and
+  roles; password handling; admins can't change their own role; guests, users and editors
+  are kept out of the admin pages.
 - `test/models/article_test.rb` (5): required title, content and category; belongs to a user.
 - `test/models/user_test.rb` (6): required email and password; default `user` role;
   editor and admin roles; a user has many articles.
 
 ## Not implemented
 
-- **Admin user management (extra credit).** The `admin` role exists and is blocked from
-  writing articles, but there is no admin page for creating users or changing roles yet.
-  Roles can be set from the Rails console, e.g.
-  `User.find_by(email: "someone@example.com").update!(role: :editor)`.
+- **Deleting users.** Not required by the brief. Users own articles, so this would first
+  need a decision on whether their articles are deleted or reassigned.
