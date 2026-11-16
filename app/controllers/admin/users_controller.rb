@@ -19,6 +19,7 @@ class Admin::UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
+    @user.role = requested_role if requested_role
 
     if @user.save
       redirect_to admin_users_path, notice: "User #{@user.email} was successfully created!"
@@ -31,7 +32,10 @@ class Admin::UsersController < ApplicationController
   end
 
   def update
-    if @user.update(user_params)
+    @user.assign_attributes(user_params)
+    @user.role = requested_role if requested_role
+
+    if @user.save
       redirect_to admin_users_path, notice: "User #{@user.email} was successfully updated!"
     else
       render :edit, status: :unprocessable_entity
@@ -45,7 +49,8 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    permitted = params.require(:user).permit(:email, :password, :password_confirmation, :role)
+    # The role is deliberately not mass-assigned here; see requested_role
+    permitted = params.require(:user).permit(:email, :password, :password_confirmation)
 
     # Leaving both password fields blank on the edit form keeps the current password
     if action_name == "update" && permitted[:password].blank? && permitted[:password_confirmation].blank?
@@ -53,10 +58,13 @@ class Admin::UsersController < ApplicationController
       permitted.delete(:password_confirmation)
     end
 
-    # Only accept roles Petergate knows about (:user, :editor, :admin)
-    permitted.delete(:role) unless User::ROLES.map(&:to_s).include?(permitted[:role].to_s)
-
     permitted
+  end
+
+  # The role picked on the form, but only if it's one Petergate knows about (:user, :editor, :admin)
+  def requested_role
+    role = params.dig(:user, :role).to_s
+    role if User::ROLES.map(&:to_s).include?(role)
   end
 
   # An admin changing their own role could lock everyone out of this page
