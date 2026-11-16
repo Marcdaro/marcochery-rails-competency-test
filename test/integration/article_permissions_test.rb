@@ -166,6 +166,74 @@ class ArticlePermissionsTest < ActionDispatch::IntegrationTest
     assert_select "section[aria-labelledby=trending-heading] h3 a", text: "Breaking 0", count: 0
   end
 
+  test "hand-picked trending stories come first, in order" do
+    Article.create!(title: "Newest Story", content: "Body", category: "World", user: @editor)
+    Article.create!(title: "Second Pick", content: "Body", category: "World", user: @editor, trending_position: 2)
+    Article.create!(title: "First Pick", content: "Body", category: "Sports", user: @editor, trending_position: 1)
+
+    get root_path
+
+    trending = css_select("section[aria-labelledby=trending-heading] h3 a").map { |link| link.text.strip }
+    assert_equal [ "First Pick", "Second Pick", "Newest Story" ], trending
+  end
+
+  test "editors can upload an image with a new article" do
+    sign_in @editor
+
+    post articles_path, params: {
+      article: {
+        title: "Pictured Article", content: "Body", category: "Test",
+        image: fixture_file_upload("sample.jpg", "image/jpeg")
+      }
+    }
+
+    assert Article.find_by(title: "Pictured Article").image.attached?
+  end
+
+  test "editors can replace and remove an article image" do
+    sign_in @editor
+    @article.image.attach(io: file_fixture("sample.jpg").open, filename: "old.jpg", content_type: "image/jpeg")
+
+    get edit_article_path(@article)
+    assert_select "img[alt=?]", "Current image"
+    assert_select "input[type=checkbox][name=?]", "article[remove_image]"
+
+    patch article_path(@article), params: { article: { image: fixture_file_upload("sample.jpg", "image/jpeg") } }
+    assert @article.reload.image.attached?
+
+    patch article_path(@article), params: { article: { remove_image: "1" } }
+    assert_not @article.reload.image.attached?
+  end
+
+  test "non-image uploads are rejected" do
+    sign_in @editor
+
+    assert_no_difference("Article.count") do
+      post articles_path, params: {
+        article: {
+          title: "Bad Upload", content: "Body", category: "Test",
+          image: fixture_file_upload("not_an_image.txt", "text/plain")
+        }
+      }
+    end
+    assert_response :unprocessable_entity
+    assert_select "li", text: "Image must be a JPEG, PNG, WebP or GIF"
+  end
+
+  test "article images show on the homepage, index and article page" do
+    @article.image.attach(io: file_fixture("sample.jpg").open, filename: "sample.jpg", content_type: "image/jpeg")
+
+    get root_path
+    assert_select "section[data-category=Test] img[src*=?]", "sample.jpg"
+
+    get articles_path
+    assert_select "img[src*=?]", "sample.jpg"
+
+    sign_in @reader
+    get article_path(@article)
+    assert_select "article img[alt=?][src*=?]", "Test Article", "sample.jpg"
+  end
+
   test "header has a light/dark theme switch" do
     get root_path
     assert_select "header button[data-controller=theme][data-action=?]", "theme#toggle"

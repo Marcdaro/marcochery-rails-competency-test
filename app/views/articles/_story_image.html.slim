@@ -1,0 +1,8 @@
+/ Fills its (relative, sized) parent with the article's photo.
+/ Articles without one get a category-coloured gradient with a faint initial instead.
+/ letter_class sizes and places that initial.
+- if article.image.attached?
+  = image_tag article.image, alt: "", loading: "lazy", class: "absolute inset-0 h-full w-full object-cover"
+- else
+  div aria-hidden="true" class="absolute inset-0 bg-gradient-to-br #{story_gradient(article.category)}"
+    span class="pointer-events-none absolute font-serif leading-none font-black select-none #{letter_class}" = article.category.first

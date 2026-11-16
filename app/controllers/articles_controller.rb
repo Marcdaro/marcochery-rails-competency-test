@@ -15,20 +15,23 @@ class ArticlesController < ApplicationController
 
   def home
     @articles_by_category =
-      Article.order(created_at: :desc, id: :desc)
+      Article.with_attached_image.order(created_at: :desc, id: :desc)
       .group_by(&:category)
       .transform_values { |items| items.first(3) }
       .sort.to_h # show categories alphabetically
 
-    # Trending Now: the three newest stories across every category
-    @trending_articles = Article.order(created_at: :desc, id: :desc).limit(3)
+    # Trending Now: hand-picked stories (trending_position 1-3) first,
+    # then the newest stories fill any empty slots
+    picked = Article.with_attached_image.where.not(trending_position: nil).order(:trending_position).limit(3).to_a
+    newest = Article.with_attached_image.where.not(id: picked.map(&:id)).order(created_at: :desc, id: :desc).limit(3 - picked.size)
+    @trending_articles = picked + newest
   end
 
   def index
     # Optional ?category=World filter, used by the category links in the nav bar
     @category = params[:category].presence if params[:category].is_a?(String)
 
-    @articles = Article.includes(:user).order(created_at: :desc, id: :desc)
+    @articles = Article.includes(:user).with_attached_image.order(created_at: :desc, id: :desc)
     @articles = @articles.where(category: @category) if @category
 
     # Optional ?q=keyword search from the header's search box (title or content)
@@ -75,7 +78,7 @@ class ArticlesController < ApplicationController
   private
 
   def article_params
-    params.require(:article).permit(:title, :content, :category)
+    params.require(:article).permit(:title, :content, :category, :image, :remove_image)
   end
 
   def require_signup_for_guests

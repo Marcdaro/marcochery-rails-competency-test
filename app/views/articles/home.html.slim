@@ -5,7 +5,7 @@
   section.mb-12 aria-labelledby="trending-heading"
     div class="mb-5"
       h2#trending-heading class="border-l-4 border-red-600 pl-3 font-serif text-3xl font-bold text-ink" Trending Now
-      p class="mt-1 pl-4 text-sm text-muted" The newest stories from across the site.
+      p class="mt-1 pl-4 text-sm text-muted" The top stories from across the site.
     = render "articles/story_section", articles: @trending_articles, show_category: true
 
   / One section per category, alphabetically, each with its newest three stories

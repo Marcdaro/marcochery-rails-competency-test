@@ -19,6 +19,19 @@
     p.form-hint Pick an existing category or type a new one.
 
   div
+    = form.label :image, class: "form-label"
+    / Only preview an image that's already saved (not one from a failed submit)
+    - if article.image.attached? && article.image.blob.persisted?
+      .mb-3.flex.items-center.gap-4
+        = image_tag article.image, alt: "Current image", class: "h-20 w-32 rounded-md object-cover"
+        label.flex.items-center.gap-2.text-sm.text-body
+          = form.check_box :remove_image, class: "h-4 w-4 rounded border-strong accent-red-700"
+          | Remove image
+    = form.file_field :image, accept: Article::IMAGE_TYPES.join(","),
+      class: "block w-full text-sm text-body file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-raised file:px-4 file:py-2 file:text-sm file:font-semibold file:text-ink hover:file:bg-line"
+    p.form-hint JPEG, PNG, WebP or GIF, up to 5 MB. Landscape photos look best.
+
+  div
     = form.label :content, class: "form-label"
     = form.text_area :content, rows: 14, class: "form-input leading-relaxed"
     p.form-hint Leave a blank line between paragraphs.
